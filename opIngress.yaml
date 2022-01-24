@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: otusproject-ingress
+spec:
+  rules:
+  - host: "arch.homework"
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: otusproject-service
+            port:
+              number: 80
+
