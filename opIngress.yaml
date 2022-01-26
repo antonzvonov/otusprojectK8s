@@ -14,4 +14,5 @@ spec:
             name: otusproject-service
             port:
               number: 80
+  ingressClassName: nginx
 
