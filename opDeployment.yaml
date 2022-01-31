@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: otusproject
-        image: otusproject:5.1        
+        image: atott/otusproject:5.1        
         ports:
         - containerPort: 8000
