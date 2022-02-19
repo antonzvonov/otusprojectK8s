@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otusproject-deployment
+spec:
+  selector:
+    matchLabels:
+      app: otusproject
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: otusproject
+    spec:
+      containers:
+        - name: otusproject
+          image: atott/otusproject:6.0.1
+          ports:
+            - containerPort: 8080
+          env:   
+            - name: DB_HOST 
+              valueFrom :
+                configMapKeyRef :
+                  name : db-config
+                  key :  host
+
+            - name: DB_NAME
+              valueFrom :
+                configMapKeyRef :
+                  name : db-config
+                  key :  dbName
+
+            - name: DB_USERNAME  
+              valueFrom :
+                secretKeyRef :
+                  name : mysql-secrets
+                  key :  username
+
+            - name: DB_PASSWORD
+              valueFrom :
+                secretKeyRef :
+                  name : mysql-secrets
+                  key :  password
+
+---
+
+apiVersion: v1
+kind: Service 
+metadata:
+  name: otusproject-service
+spec:
+  selector:
+    app: otusproject
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: otusproject-ingress
+spec:
+  rules:
+  - host: "arch.homework"
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: otusproject-service
+            port:
+              number: 80
+  ingressClassName: nginx
+
+
